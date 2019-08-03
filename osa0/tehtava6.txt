@@ -1,0 +1,13 @@
+note over selain:
+Tapahtumankäsittelijä luo uuden muistiinpanon 
+ja lisää sen muistiinpanojen listaan. 
+Tapahtumankäsittelijä renderöi muistiinpanolistan uudestaan. 
+Uusi muistiinpano lähetetään palvelimelle.
+end note
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+note over palvelin:
+Palvelimella lisätään POST-pyynnön mukana 
+JSON-muodossa tullut uusi muistiinpano 
+muistiinpanojen listaan
+end note
+palvelin-->selain: statuskoodi 201 Created

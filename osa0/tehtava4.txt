@@ -1,0 +1,24 @@
+selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note
+note over palvelin:
+palvelimella luodaan uudelle muistiinpanolle olio, 
+joka lisätään muistiinpanojen listaan
+end note
+palvelin-->selain: uudelleenohjauspyyntö osoitteeseen /notes
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
+palvelin-->selain: sivun HTML-koodi
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+palvelin-->selain: main.css
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.js
+palvelin-->selain: main.js
+note over selain: 
+selain alkaa suorittaa tiedoston main.js koodia, 
+johon sisältyy kutsu tiedostolle data.json
+end note
+selain->palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+palvelin-->selain: data.json 
+note over selain:
+selaimessa suoritetaan tapahtumankäsittelijä, 
+joka renderöi tiedostosta data.json 
+saadut muistiinpanot näkyviin
+end note
+
