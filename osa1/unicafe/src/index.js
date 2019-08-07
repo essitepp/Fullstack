@@ -9,13 +9,10 @@ const Button = ({ text, handleClick }) => (
 )
 
 const Statistic = ({ text, value }) => (
-    <>
-    {/* <p>{text} {value}</p> */}
     <tr>
         <td>{text}</td>
         <td>{value}</td>
     </tr>
-    </>
 )
 
 const Statistics = ({ good, neutral, bad }) => {
@@ -36,14 +33,6 @@ const Statistics = ({ good, neutral, bad }) => {
                     </tbody>
                 </table>
             </div>
-            // <div>
-            //     <Statistic text='Good' value={good}/>
-            //     <Statistic text='Neutral' value={neutral}/>
-            //     <Statistic text='Bad' value={bad}/>
-            //     <Statistic text='All' value={all}/>
-            //     <Statistic text='Average' value={average}/>
-            //     <Statistic text='Positive' value={positive + ' %'}/>
-            // </div>
         )
     }
     return (
@@ -77,8 +66,6 @@ const App = () => {
             </div>
     )
 }
-
-
 
 ReactDOM.render(<App />,
      document.getElementById('root'));
