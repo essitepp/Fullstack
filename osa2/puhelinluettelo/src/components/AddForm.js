@@ -3,7 +3,8 @@ import personService from '../services/persons'
 
 const AddForm = ({ newName, newNumber, 
     persons, setPersons, setNewName, setNewNumber, 
-    handleNameChange, handleNumberChange, changeNumber }) => {
+    handleNameChange, handleNumberChange, changeNumber,
+    setMessage, setError }) => {
 
     const addPerson = (event) => {
         event.preventDefault()
@@ -17,7 +18,6 @@ const AddForm = ({ newName, newNumber,
                     const id = persons.find(person => person.name === newName).id
                     changeNumber(id, newNumber)
                 }
-                // window.alert(`${newName} is already added to phonebook`)
         } else {
             personService
                 .create(personObject)
@@ -25,6 +25,13 @@ const AddForm = ({ newName, newNumber,
                     setPersons(persons.concat(returnedPerson))
                     setNewName('')
                     setNewNumber('')
+                    setError(false)
+                    setMessage(
+                        `${personObject.name} was added`
+                    )
+                    setTimeout(() => {
+                        setMessage(null)
+                    }, 2000)
                 }
             )
         }
