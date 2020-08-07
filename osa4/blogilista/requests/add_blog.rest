@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RVc2VyMyIsImlkIjoiNWYyZGE1N2M0Njc0YTEyOGQwOGNmYmQ1IiwiaWF0IjoxNTk2ODI4OTc3fQ.jeL_pvrYY8I5X6ellpgNjWM3EIr1o4gyhibKGzuawYc
+
+
+{
+    "title": "another good blog!",
+    "author": "blogger",
+    "url": "https://fullstackopen.com/",
+    "likes": 5
+}
