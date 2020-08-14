@@ -67,7 +67,7 @@ const Blog = ({ blog, currentUser, update, remove }) => {
         <button onClick={() => handleLike()}>like</button>
       </div>
 
-      {blog.user.username === currentUser.username
+      {currentUser && blog.user.username === currentUser.username
         ?
         <div>
           <div>
