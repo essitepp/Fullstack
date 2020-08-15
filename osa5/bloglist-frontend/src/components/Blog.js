@@ -47,14 +47,14 @@ const Blog = ({ blog, currentUser, update, remove }) => {
 
   if (!viewFull) {
     return(
-      <div style={blogStyle}>
+      <div className='blog-div' style={blogStyle}>
         {blog.title} - {blog.author}
-        <button onClick={() => setViewFull(true)}>view</button>
+        <button className='view-button' onClick={() => setViewFull(true)}>view</button>
       </div>
     )
   }
   return (
-    <div style={blogStyle}>
+    <div className='blog-div' style={blogStyle}>
       <div>
         {blog.title} - {blog.author}
         <button onClick={() => setViewFull(false)}>hide</button>
@@ -62,7 +62,7 @@ const Blog = ({ blog, currentUser, update, remove }) => {
       <div>
         {blog.url}
       </div>
-      <div>
+      <div className='likes'>
         Likes: {blog.likes}
         <button onClick={() => handleLike()}>like</button>
       </div>
