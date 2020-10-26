@@ -8,7 +8,7 @@ import BlogForm from './components/BlogForm'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification, resetNotification } from './reducers/notificationReducer'
-import { addBlog, setBlogs } from './reducers/blogReducer'
+import { setBlogs, addBlog, updateBlog, removeBlog } from './reducers/blogReducer'
 
 const App = () => {
   const [user, setUser] = useState(null)
@@ -43,10 +43,6 @@ const App = () => {
     }
 
   }, [])
-
-  const sortBlogs = (blogs) => {
-    return blogs.sort((a, b) => b.likes - a.likes)
-  }
 
   const notify = (message, type='success') => {
     dispatch(setNotification({ message, type }))
@@ -92,19 +88,15 @@ const App = () => {
     }
   }
 
-  const updateBlog = async (blogObject) => {
-    const response = await blogService.update(blogObject)
-    const updatedBlogs = blogs.map(blog =>
-      blog.id === blogObject.id ? response : blog)
-    dispatch(setBlogs(sortBlogs(updatedBlogs)))
+  const handleUpdatingBlog = async (blogObject) => {
+    const updatedBlog = await blogService.update(blogObject)
+    dispatch(updateBlog(updatedBlog))
   }
 
-  const removeBlog = async (blogObject) => {
+  const handleRemovingBlog = async (blogObject) => {
     if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
       await blogService.remove(blogObject)
-      const updatedBlogs = blogs.filter(blog =>
-        blog.id !== blogObject.id)
-      dispatch(setBlogs(sortBlogs(updatedBlogs)))
+      dispatch(removeBlog(blogObject))
       notify(`removed blog "${blogObject.title}" by ${blogObject.author}`)
     }
   }
@@ -171,8 +163,8 @@ const App = () => {
           key={blog.id}
           blog={blog}
           currentUser={user}
-          update={updateBlog}
-          remove={removeBlog}
+          update={handleUpdatingBlog}
+          remove={handleRemovingBlog}
         />
       )}
     </div>
