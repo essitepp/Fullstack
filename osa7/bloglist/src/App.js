@@ -6,10 +6,16 @@ import Notification from './components/Notification'
 import Toggleable from './components/Toggleable'
 import BlogForm from './components/BlogForm'
 
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from 'react-router-dom'
+
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification, resetNotification } from './reducers/notificationReducer'
 import { initializeBlogs, addBlog, updateBlog, removeBlog } from './reducers/blogReducer'
-import { setUser } from './reducers/userReducer'
+import { setCurrentUser } from './reducers/currentUserReducer'
+import { initializeUsers } from './reducers/userReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -28,8 +34,12 @@ const App = () => {
     return state.blogs
   })
 
-  const user = useSelector(state => {
-    return state.user
+  const currentUser = useSelector(state => {
+    return state.currentUser
+  })
+
+  const users = useSelector(state => {
+    return state.users
   })
 
   useEffect(() => {
@@ -37,11 +47,15 @@ const App = () => {
   }, [dispatch])
 
   useEffect(() => {
+    dispatch(initializeUsers())
+  }, [dispatch, blogs])
+
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
-    const user = JSON.parse(loggedUserJSON)
-    if (user) {
-      dispatch(setUser(user))
-      blogService.setToken(user.token)
+    const currentUser = JSON.parse(loggedUserJSON)
+    if (currentUser) {
+      dispatch(setCurrentUser(currentUser))
+      blogService.setToken(currentUser.token)
     }
 
   }, [dispatch])
@@ -61,7 +75,7 @@ const App = () => {
         'loggedBlogAppUser', JSON.stringify(user)
       )
       blogService.setToken(user.token)
-      dispatch(setUser(user))
+      dispatch(setCurrentUser(user))
       setUsername('')
       setPassword('')
     } catch (exception) {
@@ -71,7 +85,7 @@ const App = () => {
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
-    dispatch(setUser(null))
+    dispatch(setCurrentUser(null))
     notify('logged out')
   }
 
@@ -139,7 +153,7 @@ const App = () => {
   }
 
 
-  if (user === null) {
+  if (currentUser === null) {
     return (
       <div>
         <Notification notification={notification}/>
@@ -149,25 +163,54 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h1>BlogApp</h1>
-      <Notification notification={notification}/>
-      <p>
-        {user.name} logged in
-        <button onClick={handleLogout}>log out</button>
-      </p>
-      {blogForm()}
-      <h3>Blogs</h3>
-      {blogs.map(blog =>
-        <Blog
-          key={blog.id}
-          blog={blog}
-          currentUser={user}
-          update={handleUpdatingBlog}
-          remove={handleRemovingBlog}
-        />
-      )}
-    </div>
+    <Router>
+      <div>
+        <h1>BlogApp</h1>
+        <Notification notification={notification}/>
+        <p>
+          {currentUser.name} logged in
+          <button onClick={handleLogout}>log out</button>
+        </p>
+      </div>
+
+      <Switch>
+        <Route path="/users">
+          <div>
+            <h2>Users</h2>
+            <table>
+              <tbody>
+                <tr>
+                  <td><b>user</b></td>
+                  <td><b>blogs created</b></td>
+                </tr>
+                {users.map(user => (
+                  <tr key={user.id}>
+                    <td>{user.name}</td>
+                    <td>{user.blogs.length}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Route>
+
+        <Route path="/">
+          <div>
+            {blogForm()}
+            <h3>Blogs</h3>
+            {blogs.map(blog =>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                currentUser={currentUser}
+                update={handleUpdatingBlog}
+                remove={handleRemovingBlog}
+              />
+            )}
+          </div>
+        </Route>
+      </Switch>
+    </Router>
 
   )
 }
