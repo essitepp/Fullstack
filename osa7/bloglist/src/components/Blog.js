@@ -25,24 +25,13 @@ const Blog = ({ blog, currentUser, update, remove }) => {
 
   const handleLike = () => {
     update({
-      id: blog.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
+      ...blog,
       likes: blog.likes + 1,
-      user: blog.user.name
     })
   }
 
   const handleDelete = () => {
-    remove({
-      id: blog.id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1,
-      user: blog.user.name
-    })
+    remove(blog)
   }
 
   if (!viewFull) {
