@@ -8,7 +8,7 @@ import BlogForm from './components/BlogForm'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification, resetNotification } from './reducers/notificationReducer'
-import { setBlogs, addBlog, updateBlog, removeBlog } from './reducers/blogReducer'
+import { initializeBlogs, addBlog, updateBlog, removeBlog } from './reducers/blogReducer'
 import { setUser } from './reducers/userReducer'
 
 const App = () => {
@@ -33,9 +33,7 @@ const App = () => {
   })
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      dispatch(setBlogs(blogs))
-    )
+    dispatch(initializeBlogs())
   }, [dispatch])
 
   useEffect(() => {
@@ -46,7 +44,7 @@ const App = () => {
       blogService.setToken(user.token)
     }
 
-  }, [])
+  }, [dispatch])
 
   const notify = (message, type='success') => {
     dispatch(setNotification({ message, type }))
@@ -92,14 +90,12 @@ const App = () => {
     }
   }
 
-  const handleUpdatingBlog = async (blogObject) => {
-    const updatedBlog = await blogService.update(blogObject)
-    dispatch(updateBlog(updatedBlog))
+  const handleUpdatingBlog = async (blog) => {
+    dispatch(updateBlog(blog))
   }
 
   const handleRemovingBlog = async (blogObject) => {
     if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
-      await blogService.remove(blogObject)
       dispatch(removeBlog(blogObject))
       notify(`removed blog "${blogObject.title}" by ${blogObject.author}`)
     }
