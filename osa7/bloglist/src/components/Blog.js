@@ -1,8 +1,9 @@
 /* eslint-disable no-irregular-whitespace */
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, currentUser, update, remove }) => {
+const Blog = ({ blog, currentUser, update, remove, url, viewFull=true }) => {
 
   Blog.propTypes = {
     blog: PropTypes.object.isRequired,
@@ -10,8 +11,6 @@ const Blog = ({ blog, currentUser, update, remove }) => {
     update: PropTypes.func.isRequired,
     remove: PropTypes.func.isRequired
   }
-
-  const [viewFull, setViewFull] = useState(false)
 
   const blogStyle = {
     paddingTop: 10,
@@ -37,20 +36,14 @@ const Blog = ({ blog, currentUser, update, remove }) => {
   if (!viewFull) {
     return(
       <div className='blog-div' style={blogStyle}>
-        {blog.title} - {blog.author}
-        <button className='view-button' onClick={() => setViewFull(true)}>view</button>
+        <Link to={url}>{blog.title} - {blog.author}</Link>
       </div>
     )
   }
   return (
-    <div className='blog-div' style={blogStyle}>
-      <div>
-        {blog.title} - {blog.author}
-        <button onClick={() => setViewFull(false)}>hide</button>
-      </div>
-      <div>
-        {blog.url}
-      </div>
+    <div>
+      <h2>{blog.title} - {blog.author}</h2>
+      <a href={blog.url}>{blog.url}</a>
       <div className='likes'>
         Likes: {blog.likes}
         <button onClick={() => handleLike()}>like</button>

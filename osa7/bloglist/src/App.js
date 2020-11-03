@@ -6,10 +6,7 @@ import Notification from './components/Notification'
 import Toggleable from './components/Toggleable'
 import BlogForm from './components/BlogForm'
 
-import {
-  BrowserRouter as Router,
-  Switch, Route, Link
-} from 'react-router-dom'
+import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification, resetNotification } from './reducers/notificationReducer'
@@ -112,6 +109,9 @@ const App = () => {
     if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}?`)) {
       dispatch(removeBlog(blogObject))
       notify(`removed blog "${blogObject.title}" by ${blogObject.author}`)
+      setTimeout(() => {
+        window.location.href = '/'
+      }, 1000)
     }
   }
 
@@ -152,6 +152,15 @@ const App = () => {
     )
   }
 
+  const userMatch = useRouteMatch('/users/:id')
+  const user = userMatch
+    ? users.find(user => user.id === userMatch.params.id)
+    : null
+
+  const blogMatch = useRouteMatch('/blogs/:id')
+  const blog = blogMatch
+    ? blogs.find(blog => blog.id === blogMatch.params.id)
+    : null
 
   if (currentUser === null) {
     return (
@@ -162,38 +171,39 @@ const App = () => {
     )
   }
 
+  const padding = { padding : 5 }
+  const headerStyle = {
+    backgroundColor: 'lightgrey'
+  }
   return (
-    <Router>
+    <div>
+      <div style={headerStyle}>
+        <Link style={padding} to="/">blogs</Link>
+        <Link style={padding} to="/users">users</Link>
+        {currentUser.name} logged in
+        <button onClick={handleLogout}>log out</button>
+      </div>
       <div>
         <h1>BlogApp</h1>
         <Notification notification={notification}/>
-        <p>
-          {currentUser.name} logged in
-          <button onClick={handleLogout}>log out</button>
-        </p>
+
       </div>
 
       <Switch>
-        <Route path="/users">
-          <div>
-            <h2>Users</h2>
-            <table>
-              <tbody>
-                <tr>
-                  <td><b>user</b></td>
-                  <td><b>blogs created</b></td>
-                </tr>
-                {users.map(user => (
-                  <tr key={user.id}>
-                    <td>{user.name}</td>
-                    <td>{user.blogs.length}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        <Route path="/users/:id">
+          <User user={user} />
         </Route>
-
+        <Route path="/users">
+          <Users users={users}/>
+        </Route>
+        <Route path="/blogs/:id">
+          <BlogView
+            blog={blog}
+            currentUser={currentUser}
+            update={handleUpdatingBlog}
+            remove={handleRemovingBlog}
+          />
+        </Route>
         <Route path="/">
           <div>
             {blogForm()}
@@ -205,13 +215,74 @@ const App = () => {
                 currentUser={currentUser}
                 update={handleUpdatingBlog}
                 remove={handleRemovingBlog}
+                url={`/blogs/${blog.id}`}
+                viewFull={false}
               />
             )}
           </div>
         </Route>
       </Switch>
-    </Router>
+    </div>
 
+  )
+}
+
+const User = ({ user }) => {
+  if (!user) {
+    return null
+  }
+  return (
+    <div>
+      <h2>{user.name}</h2>
+      <h3>added blogs</h3>
+      <ul>
+        {user.blogs.map(blog => (
+          <li key={blog.id}>{blog.title}</li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+const Users = ({ users }) => {
+  if (!users) {
+    return null
+  }
+  return (
+    <div>
+      <h2>Users</h2>
+      <table>
+        <tbody>
+          <tr>
+            <td><b>user</b></td>
+            <td><b>blogs created</b></td>
+          </tr>
+          {users.map(user => (
+            <tr key={user.id}>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
+              <td>{user.blogs.length}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+const BlogView = ({ blog, currentUser, update, remove }) => {
+  if (!blog) {
+    return null
+  }
+  return (
+    <Blog
+      key={blog.id}
+      blog={blog}
+      currentUser={currentUser}
+      update={update}
+      remove={remove}
+    />
   )
 }
 
