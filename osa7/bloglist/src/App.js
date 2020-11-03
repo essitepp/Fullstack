@@ -10,7 +10,7 @@ import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
 
 import { useSelector, useDispatch } from 'react-redux'
 import { setNotification, resetNotification } from './reducers/notificationReducer'
-import { initializeBlogs, addBlog, updateBlog, removeBlog } from './reducers/blogReducer'
+import { initializeBlogs, addBlog, updateBlog, removeBlog, addComment } from './reducers/blogReducer'
 import { setCurrentUser } from './reducers/currentUserReducer'
 import { initializeUsers } from './reducers/userReducer'
 
@@ -115,6 +115,10 @@ const App = () => {
     }
   }
 
+  const handleAddingComment = async (blog, comment) => {
+    dispatch(addComment(blog, comment))
+  }
+
   const loginForm = () => (
     <div>
       <h2>Log in</h2>
@@ -202,6 +206,7 @@ const App = () => {
             currentUser={currentUser}
             update={handleUpdatingBlog}
             remove={handleRemovingBlog}
+            addComment={handleAddingComment}
           />
         </Route>
         <Route path="/">
@@ -271,7 +276,7 @@ const Users = ({ users }) => {
   )
 }
 
-const BlogView = ({ blog, currentUser, update, remove }) => {
+const BlogView = ({ blog, currentUser, update, remove, addComment }) => {
   if (!blog) {
     return null
   }
@@ -282,6 +287,7 @@ const BlogView = ({ blog, currentUser, update, remove }) => {
       currentUser={currentUser}
       update={update}
       remove={remove}
+      addComment={addComment}
     />
   )
 }

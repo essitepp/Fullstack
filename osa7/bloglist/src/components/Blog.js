@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 
-const Blog = ({ blog, currentUser, update, remove, url, viewFull=true }) => {
+const Blog = ({ blog, currentUser, update, remove, addComment, url, viewFull=true }) => {
 
   Blog.propTypes = {
     blog: PropTypes.object.isRequired,
@@ -31,6 +31,15 @@ const Blog = ({ blog, currentUser, update, remove, url, viewFull=true }) => {
 
   const handleDelete = () => {
     remove(blog)
+  }
+
+  const handleAddingComment = (event) => {
+    event.preventDefault()
+    const comment = {
+      comment: event.target.comment.value
+    }
+    event.target.comment.value = ''
+    addComment(blog, comment)
   }
 
   if (!viewFull) {
@@ -64,6 +73,18 @@ const Blog = ({ blog, currentUser, update, remove, url, viewFull=true }) => {
           Added by {blog.user.name}
         </div>
       }
+      <h3>comments</h3>
+      <form onSubmit={handleAddingComment}>
+        <input name="comment"/>
+        <button type="submit">
+          add comment
+        </button>
+      </form>
+      <ul>
+        {blog.comments.map(comment => (
+          <li key={comment}>{comment}</li>
+        ))}
+      </ul>
     </div>
   )
 }

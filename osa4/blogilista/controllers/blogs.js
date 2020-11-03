@@ -10,6 +10,25 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs)
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  const body = request.body
+
+  const blog = await Blog.findById(request.params.id)
+
+  const blogToUpdate = {
+    title: blog.title,
+    author: blog.author,
+    url: blog.url,
+    likes: blog.likes,
+    comments: blog.comments.concat(body.comment)
+  }
+
+  const updatedBlog = await Blog
+    .findByIdAndUpdate(request.params.id, blogToUpdate, { new: true })
+    .populate('user', { username: 1, name: 1, })
+  response.json(updatedBlog)
+})
+
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
   if (!request.token) {
