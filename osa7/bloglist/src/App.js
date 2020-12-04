@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
-import Toggleable from './components/Toggleable'
-import BlogForm from './components/BlogForm'
+import { UserView, AllUsersView, BlogView, HomeView } from './components/Views'
 
 import { Switch, Route, Link, useRouteMatch } from 'react-router-dom'
 
@@ -13,6 +11,17 @@ import { setNotification, resetNotification } from './reducers/notificationReduc
 import { initializeBlogs, addBlog, updateBlog, removeBlog, addComment } from './reducers/blogReducer'
 import { setCurrentUser } from './reducers/currentUserReducer'
 import { initializeUsers } from './reducers/userReducer'
+
+import {
+  Container,
+  Button,
+  TextField,
+  AppBar,
+  Toolbar,
+  Link as UILink
+} from '@material-ui/core'
+
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -86,6 +95,8 @@ const App = () => {
     notify('logged out')
   }
 
+  const blogFormRef = useRef()
+
   const handleAddingBlog = async ({ title, author, url }) => {
     blogFormRef.current.toggleVisibility()
     try {
@@ -119,42 +130,44 @@ const App = () => {
     dispatch(addComment(blog, comment))
   }
 
+  const margins = { marginTop : 5 }
   const loginForm = () => (
     <div>
-      <h2>Log in</h2>
+      <h1>Log in</h1>
       <form onSubmit={handleLogin}>
         <div>
-            username
-          <input
-            type='text'
+          <TextField
             id='username'
+            label="Username"
+            variant='filled'
+            size='small'
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-            password
-          <input
+          <TextField
             type='password'
             id='password'
+            label='Password'
+            variant='filled'
+            size='small'
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button id='login-button' type='submit'>log in</button>
+        <Button
+          id='login-button'
+          type='submit'
+          variant='contained'
+          color='primary'
+          style={margins}
+        >
+          log in
+        </Button>
       </form>
     </div>
   )
-
-  const blogFormRef = useRef()
-
-  const blogForm = () => {
-    return (
-      <Toggleable buttonLabel='add blog' ref={blogFormRef}>
-        <BlogForm createBlog={handleAddingBlog}/>
-      </Toggleable>
-    )
-  }
 
   const userMatch = useRouteMatch('/users/:id')
   const user = userMatch
@@ -168,25 +181,27 @@ const App = () => {
 
   if (currentUser === null) {
     return (
-      <div>
+      <Container>
         <Notification notification={notification}/>
         {loginForm()}
-      </div>
+      </Container>
     )
   }
-
   const padding = { padding : 5 }
-  const headerStyle = {
-    backgroundColor: 'lightgrey'
-  }
   return (
-    <div>
-      <div style={headerStyle}>
-        <Link style={padding} to="/">blogs</Link>
-        <Link style={padding} to="/users">users</Link>
-        {currentUser.name} logged in
-        <button onClick={handleLogout}>log out</button>
-      </div>
+    <Container>
+      <AppBar position='static'>
+        <Toolbar>
+          <Button color='inherit' component={Link} to="/">Blogs</Button>
+          <Button color='inherit' component={Link} to="/users">Users</Button>
+          <UILink color='inherit' component={Link} to={`/users/${currentUser.id}`} style={padding}>
+            logged in as {currentUser.name}
+          </UILink>
+          <Button color='inherit' endIcon={<ExitToAppIcon />} onClick={handleLogout}>
+            Log out
+          </Button>
+        </Toolbar>
+      </AppBar>
       <div>
         <h1>BlogApp</h1>
         <Notification notification={notification}/>
@@ -195,10 +210,10 @@ const App = () => {
 
       <Switch>
         <Route path="/users/:id">
-          <User user={user} />
+          <UserView user={user} />
         </Route>
         <Route path="/users">
-          <Users users={users}/>
+          <AllUsersView users={users}/>
         </Route>
         <Route path="/blogs/:id">
           <BlogView
@@ -210,85 +225,15 @@ const App = () => {
           />
         </Route>
         <Route path="/">
-          <div>
-            {blogForm()}
-            <h3>Blogs</h3>
-            {blogs.map(blog =>
-              <Blog
-                key={blog.id}
-                blog={blog}
-                currentUser={currentUser}
-                update={handleUpdatingBlog}
-                remove={handleRemovingBlog}
-                url={`/blogs/${blog.id}`}
-                viewFull={false}
-              />
-            )}
-          </div>
+          <HomeView
+            blogFormRef={blogFormRef}
+            handleAddingBlog={handleAddingBlog}
+            blogs={blogs}
+          />
         </Route>
       </Switch>
-    </div>
+    </Container>
 
-  )
-}
-
-const User = ({ user }) => {
-  if (!user) {
-    return null
-  }
-  return (
-    <div>
-      <h2>{user.name}</h2>
-      <h3>added blogs</h3>
-      <ul>
-        {user.blogs.map(blog => (
-          <li key={blog.id}>{blog.title}</li>
-        ))}
-      </ul>
-    </div>
-  )
-}
-
-const Users = ({ users }) => {
-  if (!users) {
-    return null
-  }
-  return (
-    <div>
-      <h2>Users</h2>
-      <table>
-        <tbody>
-          <tr>
-            <td><b>user</b></td>
-            <td><b>blogs created</b></td>
-          </tr>
-          {users.map(user => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.blogs.length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
-const BlogView = ({ blog, currentUser, update, remove, addComment }) => {
-  if (!blog) {
-    return null
-  }
-  return (
-    <Blog
-      key={blog.id}
-      blog={blog}
-      currentUser={currentUser}
-      update={update}
-      remove={remove}
-      addComment={addComment}
-    />
   )
 }
 

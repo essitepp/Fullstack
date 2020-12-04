@@ -1,25 +1,26 @@
-/* eslint-disable no-irregular-whitespace */
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
+import {
+  Button,
+  TextField,
+  Link,
+  IconButton,
+  Box,
+  List,
+  ListItem
+} from '@material-ui/core'
 
-const Blog = ({ blog, currentUser, update, remove, addComment, url, viewFull=true }) => {
+import { ThumbUp, Delete } from '@material-ui/icons'
+
+const Blog = ({ blog, currentUser, update, remove, addComment }) => {
 
   Blog.propTypes = {
     blog: PropTypes.object.isRequired,
     currentUser: PropTypes.object.isRequired,
     update: PropTypes.func.isRequired,
-    remove: PropTypes.func.isRequired
-  }
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 5,
-    paddingBottom: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-    borderColor: 'lightgrey'
+    remove: PropTypes.func.isRequired,
+    addComment: PropTypes.func.isRequired
   }
 
   const handleLike = () => {
@@ -42,21 +43,16 @@ const Blog = ({ blog, currentUser, update, remove, addComment, url, viewFull=tru
     addComment(blog, comment)
   }
 
-  if (!viewFull) {
-    return(
-      <div className='blog-div' style={blogStyle}>
-        <Link to={url}>{blog.title} - {blog.author}</Link>
-      </div>
-    )
-  }
   return (
     <div>
       <h2>{blog.title} - {blog.author}</h2>
-      <a href={blog.url}>{blog.url}</a>
-      <div className='likes'>
-        Likes: {blog.likes}
-        <button onClick={() => handleLike()}>like</button>
-      </div>
+      <Link href={blog.url}>{blog.url}</Link>
+      <Box alignItems='center' className='likes'>
+        {blog.likes} {blog.likes === 1 ? 'like' : 'likes'}
+        <IconButton onClick={() => handleLike()} color='primary'>
+          <ThumbUp />
+        </IconButton>
+      </Box>
 
       {currentUser && blog.user.username === currentUser.username
         ?
@@ -64,27 +60,35 @@ const Blog = ({ blog, currentUser, update, remove, addComment, url, viewFull=tru
           <div>
             Added by You
           </div>
+          <br/>
           <div>
-            <button onClick={handleDelete}>remove</button>
+            <Button onClick={handleDelete} startIcon={<Delete />} color='primary'>
+              remove
+            </Button>
           </div>
         </div>
         :
         <div>
-          Added by {blog.user.name}
+          Added by
+          <Button to={`/users/${blog.user.id}`} component={RouterLink} color='primary'>
+            {blog.user.name}
+          </Button>
         </div>
       }
-      <h3>comments</h3>
-      <form onSubmit={handleAddingComment}>
-        <input name="comment"/>
-        <button type="submit">
-          add comment
-        </button>
+      <h3>Comments</h3>
+      <form style={{ display:'flex' }} onSubmit={handleAddingComment}>
+        <TextField name="comment" size='small' label='Add new comment' variant='outlined'/>
+        <Button style={{ marginLeft: 5 }}type="submit" color='primary' variant='contained' size='medium'>
+          Add
+        </Button>
       </form>
-      <ul>
-        {blog.comments.map(comment => (
-          <li key={comment}>{comment}</li>
-        ))}
-      </ul>
+      <div>
+        <List>
+          {blog.comments.map(comment => (
+            <ListItem key={comment}>{comment}</ListItem>
+          ))}
+        </List>
+      </div>
     </div>
   )
 }

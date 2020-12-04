@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import { Alert } from '@material-ui/lab'
+
 const Notification = ({ notification }) => {
 
   Notification.propTypes = {
@@ -11,9 +13,9 @@ const Notification = ({ notification }) => {
     return null
   }
   return (
-    <div className={notification.type}>
+    <Alert severity={notification.type}>
       {notification.message}
-    </div>
+    </Alert>
   )
 }
 
