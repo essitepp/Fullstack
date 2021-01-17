@@ -8,8 +8,6 @@ const BirthYearForm = ({ authors }) => {
   const [name, setName] = useState('')
   const [year, setYear] = useState('')
 
-  console.log('name:', name)
-
   const [ editBirthYear ] = useMutation(EDIT_BIRTHYEAR, {
     refetchQueries: [ { query: ALL_AUTHORS } ]
   })
