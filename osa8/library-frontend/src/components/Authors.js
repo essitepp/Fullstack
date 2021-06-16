@@ -4,10 +4,10 @@ import { useQuery } from '@apollo/client'
 import { ALL_AUTHORS } from '../queries'
 import BirthYearForm from './BirthYearForm'
 
-const Authors = (props) => {
+const Authors = ({ show, loggedIn, notify }) => {
   const result = useQuery(ALL_AUTHORS)
 
-  if (!props.show) {
+  if (!show) {
     return null
   }
 
@@ -16,8 +16,6 @@ const Authors = (props) => {
   }
 
   const authors = result.data.allAuthors
-
-
 
   return (
     <div>
@@ -42,7 +40,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-      <BirthYearForm authors={authors}/>
+      {loggedIn && <BirthYearForm authors={authors} notify={notify}/>}
 
     </div>
   )

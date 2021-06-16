@@ -3,19 +3,22 @@ import { useMutation } from '@apollo/client'
 
 import { EDIT_BIRTHYEAR, ALL_AUTHORS } from '../queries'
 
-const BirthYearForm = ({ authors }) => {
+const BirthYearForm = ({ authors, notify }) => {
 
   const [name, setName] = useState('')
   const [year, setYear] = useState('')
 
   const [ editBirthYear ] = useMutation(EDIT_BIRTHYEAR, {
-    refetchQueries: [ { query: ALL_AUTHORS } ]
+    refetchQueries: [ { query: ALL_AUTHORS } ],
+    onError: (error) => {
+      notify(error.graphQLErrors[0].message)
+    }
   })
 
   const submit = (event) => {
     event.preventDefault()
 
-    if(name) {
+    if (name && year) {
       editBirthYear({ variables: { name, year } })
 
       setName('')
