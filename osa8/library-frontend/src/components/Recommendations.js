@@ -7,7 +7,7 @@ const Recommendations = ({ show }) => {
   
   const userResult = useQuery(CURRENT_USER)
   let genre
-  if (userResult.data) {
+  if (userResult.data?.me) {
     genre = userResult.data.me.favoriteGenre
   } 
   const bookResult = useQuery(ALL_BOOKS, {
