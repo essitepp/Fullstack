@@ -11,7 +11,7 @@ const BirthYearForm = ({ authors, notify }) => {
   const [ editBirthYear ] = useMutation(EDIT_BIRTHYEAR, {
     refetchQueries: [ { query: ALL_AUTHORS } ],
     onError: (error) => {
-      notify(error.graphQLErrors[0].message)
+      notify(error.graphQLErrors[0].message, true)
     }
   })
 
