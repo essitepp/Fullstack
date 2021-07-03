@@ -85,7 +85,7 @@ const typeDefs = gql`
 const resolvers = {
   Author: {
     bookCount: async (root) => {
-      return Book.countDocuments({ author: root.id })
+      return root.books.length
     }
   },
   Query: {
@@ -102,7 +102,7 @@ const resolvers = {
       return Book.find(query).populate('author')
     },
     allAuthors: () => {
-      return Author.find({})
+      return Author.find({}).populate('books')
     },
     me: (root, args, context) => {
       return context.currentUser
@@ -133,6 +133,8 @@ const resolvers = {
           invalidArgs: args
         })
       }
+      author.books = author.books.concat(book)
+      await author.save()
       pubsub.publish('BOOK_ADDED', { bookAdded: book })
       return book
     },
