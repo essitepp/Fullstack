@@ -16,9 +16,9 @@ interface Result {
 const calculateExercises = ({ dailyHours, target }: ExerciseInput): Result => {
   const periodLength = dailyHours.length;
   const trainingDays = dailyHours.reduce((acc, value) => 
-    value > 0 ? acc + 1 : acc, 0)
+    value > 0 ? acc + 1 : acc, 0);
   const average = dailyHours.reduce((sum, value) => sum + value, 0) / periodLength;
-  const success = average >= target
+  const success = average >= target;
   let rating;
   let ratingDescription;
   if (average >= target) {
@@ -41,7 +41,7 @@ const calculateExercises = ({ dailyHours, target }: ExerciseInput): Result => {
     target,
     average,
   };
-}
+};
 
 const parseExerciseInput = (inputArray: Array<string>): ExerciseInput => {
   if (inputArray.length < 4) {
@@ -56,11 +56,13 @@ const parseExerciseInput = (inputArray: Array<string>): ExerciseInput => {
   return {
     target,
     dailyHours,
-  }
-}
+  };
+};
+
+
 
 try {
   console.log(calculateExercises(parseExerciseInput(process.argv)));
 } catch (e) {
-  console.log('Error:', e.message)
+  console.log('Error:', (e as Error).message);
 }

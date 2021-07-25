@@ -5,7 +5,7 @@ import { calculateBmi } from './bmiCalculator';
 
 app.get('/hello', (_req, res) => {
   res.send('Hello Full Stack!');
-})
+});
 
 app.get('/bmi', (req, res) => {
   const height = Number(req.query.height);
@@ -16,11 +16,11 @@ app.get('/bmi', (req, res) => {
     return;
   }
   const bmi = calculateBmi({ height, weight });
-  res.send({ weight, height, bmi })
-})
+  res.send({ weight, height, bmi });
+});
 
 const PORT = 3001;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});

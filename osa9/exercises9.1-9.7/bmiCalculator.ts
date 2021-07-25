@@ -22,7 +22,7 @@ export const calculateBmi = ({ height, weight }: BmiInput): string => {
   } else {
     return 'Obese (Class III)';
   }
-}
+};
 
 const parseBmiInput = (inputArray: Array<string>): BmiInput => {
   if (inputArray.length > 4) {
@@ -38,11 +38,11 @@ const parseBmiInput = (inputArray: Array<string>): BmiInput => {
   return {
     height,
     weight,
-  }
-}
+  };
+};
 
 try {
-  console.log(calculateBmi(parseBmiInput(process.argv)))
+  console.log(calculateBmi(parseBmiInput(process.argv)));
 } catch (e) {
-  console.log('Error:', e.message)
+  console.log('Error:', (e as Error).message);
 }
