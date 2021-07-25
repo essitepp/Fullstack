@@ -1,48 +1,48 @@
-const calculateBmi = (height: number, weight: number): string => {
-  const bmi = weight / Math.pow(height/100, 2)
-  if (bmi < 15) {
-    return 'Very severely underweight'
-  } else if (bmi < 16) {
-    return 'Severely underweight'
+interface BmiInput {
+  height: number,
+  weight: number,
+}
+
+const calculateBmi = ({ height, weight }: BmiInput): string => {
+  const bmi = weight / Math.pow(height / 100, 2);
+  if (bmi < 16) {
+    return 'Underweight (Severe thinness)';
+  } else if (bmi < 17) {
+    return 'Underweight (Moderate thinness)';
   } else if (bmi < 18.5) {
-    return 'Underweight'
+    return 'Underweight (Mild thinness)';
   } else if (bmi < 25) {
-    return 'Normal (healthy weight)'
+    return 'Normal range';
   } else if (bmi < 30) {
-    return 'Overweight'
+    return 'Owerweight (Pre-obese)';
   } else if (bmi < 35) {
-    return 'Obese Class I (Moderately obese)'
+    return 'Obese (Class I)';
   } else if (bmi < 40) {
-    return 'Obese Class II (Severely obese)'
+    return 'Obese (Class II)';
   } else {
-    return 'Obese Class III (Very severely obese)'
-  }
-
-}
-
-const parseArguments = (args: string[]): BmiValues => {
-  if (args.length < 4) throw new Error('Not enough arguments');
-  if (args.length > 4) throw new Error('Too many arguments');
-
-  if (!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
-    return {
-      height: Number(args[2]),
-      weight: Number(args[3])
-    }
-  } else {
-    throw new Error('Provided arguments were not numbers')
+    return 'Obese (Class III)';
   }
 }
 
-interface BmiValues {
-  height: number;
-  weight: number;
+const parseBmiInput = (inputArray: Array<string>): BmiInput => {
+  if (inputArray.length > 4) {
+    throw new Error('Too many arguments');
+  } else if (inputArray.length < 4) {
+    throw new Error('Not enough arguments');
+  }
+  const height = Number(inputArray[2]);
+  const weight = Number(inputArray[3]);
+  if (isNaN(height) || isNaN(weight)) {
+    throw new Error('All arguments should be numbers');
+  }
+  return {
+    height,
+    weight,
+  }
 }
-
 
 try {
-  const { height, weight } = parseArguments(process.argv);
-  console.log(calculateBmi(height, weight));
+  console.log(calculateBmi(parseBmiInput(process.argv)))
 } catch (e) {
-  console.log('Error, something went wrong, message: ', e.message);
+  console.log('Error:', e.message)
 }

@@ -1,71 +1,66 @@
-interface Result {
-  days: number;
-  trainingDays: number;
-  target: number;
-  averageTime: number;
-  targetReached: boolean;
-  rating: number;
-  ratingDescription: string;
+interface ExerciseInput {
+  target: number,
+  dailyHours: Array<number>,
 }
 
+interface Result {
+  periodLength: number,
+  trainingDays: number,
+  success: boolean,
+  rating: number,
+  ratingDescription: string,
+  target: number,
+  average: number,
+}
 
-const calculateExercises = (exerciseHours: number[], target: number): Result => {
-  const days = exerciseHours.length;
-  const trainingDays = exerciseHours.filter(h => h != 0).length;
-  const totalTrainingTime = exerciseHours.reduce((sum, value) => sum + value, 0);
-  const averageTime = totalTrainingTime / days;
-  const targetReached = averageTime >= target;
+const calculateExercises = ({ dailyHours, target }: ExerciseInput): Result => {
+  const periodLength = dailyHours.length;
+  const trainingDays = dailyHours.reduce((acc, value) => 
+    value > 0 ? acc + 1 : acc, 0)
+  const average = dailyHours.reduce((sum, value) => sum + value, 0) / periodLength;
+  const success = average >= target
   let rating;
   let ratingDescription;
-  if (targetReached) {
+  if (average >= target) {
     rating = 3;
-    ratingDescription = 'Target reached, good job!'
-  } else if (averageTime > target/1.5) {
+    ratingDescription = 'Great';
+  } else if (average > target / 2) {
     rating = 2;
-    ratingDescription = 'You got close to the target!'
+    ratingDescription = 'Good';
   } else {
     rating = 1;
-    ratingDescription = 'You didn\'t reach the target this time, keep trying!'
+    ratingDescription = 'Room for improvement';
   }
+
   return {
-    days,
+    periodLength,
     trainingDays,
-    target,
-    averageTime,
-    targetReached,
+    success,
     rating,
-    ratingDescription
+    ratingDescription,
+    target,
+    average,
+  };
+}
+
+const parseExerciseInput = (inputArray: Array<string>): ExerciseInput => {
+  if (inputArray.length < 4) {
+    throw new Error('Not enough arguments');
+  }
+  const target = Number(inputArray[2]);
+  const dailyHours = inputArray.slice(3).map(value => Number(value));
+  if (isNaN(target) || dailyHours.includes(NaN)) {
+    throw new Error('All arguments should be numbers');
+  }
+
+  return {
+    target,
+    dailyHours,
   }
 }
-
-
-const parseExerciseArguments = (args: string[]): ExerciseInput => {
-  if (args.length < 4) throw new Error('Not enough arguments');
-
-  const target = Number(args[2])
-  const days = args.slice(3).map(d => Number(d))
-
-  if (!isNaN(target) && days.every(d => !isNaN(d))) {
-    return {
-      target,
-      days
-    }
-  } else {
-    throw new Error('Provided arguments were not numbers')
-  }
-}
-
-interface ExerciseInput {
-  target: number;
-  days: number[];
-}
-
 
 try {
-  const { target, days } = parseExerciseArguments(process.argv);
-  console.log(calculateExercises(days, target));
+  console.log(calculateExercises(parseExerciseInput(process.argv)));
 } catch (e) {
-  console.log('Error, something went wrong, message: ', e.message);
+  console.log('Error:', e.message)
 }
-
-
