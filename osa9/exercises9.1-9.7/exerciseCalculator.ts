@@ -13,7 +13,7 @@ interface Result {
   average: number,
 }
 
-const calculateExercises = ({ dailyHours, target }: ExerciseInput): Result => {
+export const calculateExercises = ({ dailyHours, target }: ExerciseInput): Result => {
   const periodLength = dailyHours.length;
   const trainingDays = dailyHours.reduce((acc, value) => 
     value > 0 ? acc + 1 : acc, 0);
