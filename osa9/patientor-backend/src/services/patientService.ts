@@ -1,16 +1,24 @@
 import { v1 as uuid } from 'uuid';
 import patients from "../../data/patients";
-import { NewPatientInput, NonSensitivePatient, Patient } from "../types";
+import { NewPatientInput, Patient, PublicPatient } from "../types";
 
 const getPatients = (): Patient[] => {
   return patients;
 };
 
-const getNonSensitivePatients = (): NonSensitivePatient[] => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return patients.map(({ ssn, ...rest }) => 
-    rest
-  );
+const getPublicPatients = (): PublicPatient[] => {
+  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+    id,
+    name,
+    dateOfBirth,
+    gender,
+    occupation,
+  }));
+};
+
+const getPatient = (id: string): Patient | undefined => {
+  console.log('finding patient');
+  return patients.find(p => p.id === id);
 };
 
 const addPatient = (newPatient: NewPatientInput): Patient => {
@@ -25,6 +33,7 @@ const addPatient = (newPatient: NewPatientInput): Patient => {
 
 export default {
   getPatients,
-  getNonSensitivePatients,
+  getPublicPatients,
+  getPatient,
   addPatient,
 };

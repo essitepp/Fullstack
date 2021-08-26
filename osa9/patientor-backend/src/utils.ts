@@ -1,6 +1,6 @@
-import { Gender, NewPatientInput } from "./types";
+import { Entry, Gender, NewPatientInput } from "./types";
 
-type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown, gender: unknown, occupation: unknown };
+type Fields = { name: unknown, dateOfBirth: unknown, ssn: unknown, gender: unknown, occupation: unknown, entries: unknown };
 
 const toNewPatientInput = ( object: Fields ): NewPatientInput => {
   const newPatient: NewPatientInput = {
@@ -9,6 +9,7 @@ const toNewPatientInput = ( object: Fields ): NewPatientInput => {
     ssn: parseSsn(object.ssn),
     gender: parseGender(object.gender),
     occupation: parseOccupation(object.occupation),
+    entries: parseEntries(object.entries)
   };
 
   return newPatient;
@@ -49,6 +50,13 @@ const parseOccupation = (occupation: unknown): string => {
   return occupation;
 };
 
+const parseEntries = (entries: unknown): Entry[] => {
+  if (!entries || !isEntries(entries)) {
+    throw new Error(`Invalid entries: ${entries}`);
+  }
+  return entries;
+};
+
 const isString = (param: unknown): param is string => {
   return typeof param === 'string' || param instanceof String;
 };
@@ -56,6 +64,14 @@ const isString = (param: unknown): param is string => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isGender = (param: any): param is Gender => {
   return Object.values(Gender).includes(param);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isEntries = (param: any): param is Entry[] => {
+  if (!(param instanceof Array)) {
+    return false;
+  }
+  return true;
 };
 
 
