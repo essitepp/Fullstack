@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Table } from "semantic-ui-react";
 import GenderIcon from "../components/GenderIcon";
 import { apiBaseUrl } from "../constants";
-import { useStateValue } from "../state";
+import { updatePatient, useStateValue } from "../state";
 import { Patient } from "../types";
 
 
@@ -19,7 +19,7 @@ const PatientInfoPage = () => {
     const fetchPatientData = async () => {
       try {
         const { data: patientData } = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
-        dispatch({ type: "UPDATE_PATIENT", payload: patientData});
+        dispatch(updatePatient(patientData));
       } catch (e) {
         console.error(e);
       }
