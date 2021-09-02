@@ -6,6 +6,7 @@ import GenderIcon from "../components/GenderIcon";
 import { apiBaseUrl } from "../constants";
 import { updatePatient, useStateValue } from "../state";
 import { Patient } from "../types";
+import Entries from "./Entries";
 
 
 const PatientInfoPage = () => {
@@ -53,6 +54,11 @@ const PatientInfoPage = () => {
           </Table.Row>
         </Table.Body>
       </Table>
+
+      <h3>Entries</h3>
+      {patient.entries &&
+        <Entries entries={patient.entries} />
+      }
       
     </div>
   );
