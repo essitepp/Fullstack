@@ -51,7 +51,7 @@ const parseOccupation = (occupation: unknown): string => {
 };
 
 const parseEntries = (entries: unknown): Entry[] => {
-  if (!entries || !isEntries(entries)) {
+  if (!entries || !isEntriesArray(entries)) {
     throw new Error(`Invalid entries: ${entries}`);
   }
   return entries;
@@ -67,11 +67,16 @@ const isGender = (param: any): param is Gender => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isEntries = (param: any): param is Entry[] => {
+const isEntriesArray = (param: any): param is Entry[] => {
   if (!(param instanceof Array)) {
     return false;
   }
-  return true;
+  return param.every(isEntry);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isEntry = (param: any): param is Entry => {
+  return ['Hospital', 'HealthCheck', 'OccupationalHealthcare'].includes(param.type);
 };
 
 
