@@ -20,6 +20,14 @@ const Entries = ({ entries }: { entries: Entry[] }) => {
     }
   };
 
+  if (entries.length === 0) {
+    return (
+      <div>
+        No entries yet
+      </div>
+    );
+  }
+
   return (
     <div>
       {entries.map(entry => <EntryDetails key={entry.id} entry={entry} />)}
