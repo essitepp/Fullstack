@@ -1,39 +1,29 @@
 import React from "react";
-import { List } from "semantic-ui-react";
-import { useStateValue } from "../state";
 import { Entry } from "../types";
+import { assertNever } from "../utils";
+import HealthCheckEntry from "./HealthCheckEntry";
+import HospitalEntry from "./HospitalEntry";
+import OccupationalHealthcareEntry from "./OccupationalHealthcareEntry";
 
 const Entries = ({ entries }: { entries: Entry[] }) => {
 
-  const [{ diagnoses }] = useStateValue();
+  const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
+    switch (entry.type) {
+      case 'Hospital':
+        return <HospitalEntry entry={entry}/>;
+      case 'OccupationalHealthcare':
+        return <OccupationalHealthcareEntry entry={entry}/>;
+      case 'HealthCheck':
+        return <HealthCheckEntry entry={entry}/>;
+      default:
+        return assertNever(entry);
+    }
+  };
 
   return (
-    <List relaxed celled>
-      {entries.map(entry => {
-        return (
-          <List.Item key={entry.id}>
-            <List.Header>
-              {entry.date}
-            </List.Header>
-            <List.Content>
-              {entry.description}
-            </List.Content>
-            {entry.diagnosisCodes &&
-              <ul>
-                {entry.diagnosisCodes.map(code => {
-                  return (
-                    <li key={code}>
-                      <strong>{code}</strong> {diagnoses[code].name}
-                    </li>
-                  );
-                })}
-              </ul>
-            }
-          </List.Item>
-        );
-        })
-      }
-    </List>
+    <div>
+      {entries.map(entry => <EntryDetails key={entry.id} entry={entry} />)}
+    </div>
   );
 };
 
