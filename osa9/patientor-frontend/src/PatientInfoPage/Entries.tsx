@@ -1,8 +1,11 @@
 import React from "react";
 import { List } from "semantic-ui-react";
+import { useStateValue } from "../state";
 import { Entry } from "../types";
 
 const Entries = ({ entries }: { entries: Entry[] }) => {
+
+  const [{ diagnoses }] = useStateValue();
 
   return (
     <List relaxed celled>
@@ -20,7 +23,7 @@ const Entries = ({ entries }: { entries: Entry[] }) => {
                 {entry.diagnosisCodes.map(code => {
                   return (
                     <li key={code}>
-                      {code}
+                      <strong>{code}</strong> {diagnoses[code].name}
                     </li>
                   );
                 })}
