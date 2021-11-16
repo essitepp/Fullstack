@@ -9,7 +9,7 @@ const toNewPatientInput = ( object: PatientFields ): NewPatientInput => {
     ssn: parseSsn(object.ssn),
     gender: parseGender(object.gender),
     occupation: parseOccupation(object.occupation),
-    entries: parseEntries(object.entries)
+    entries: parseEntries(object.entries || [])
   };
   return newPatient;
 };
@@ -57,7 +57,6 @@ const parseEntries = (entries: unknown): Entry[] => {
 };
 
 const parseDiagnosisCodes = (diagnosisCodes: unknown): Array<Diagnosis['code']> => {
-  console.log('got diagnosiscodes', diagnosisCodes);
   if (!diagnosisCodes || !isDiagnosisCodes(diagnosisCodes)) {
     throw new Error(`Invalid diagnosis codes: ${diagnosisCodes}`);
   }
@@ -166,13 +165,12 @@ const toNewEntryInput = ( object: EntryFields ): NewEntryInput => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const toHealthCheckInput = ( object: any ): HealthCheckEntryInput => {
-  console.log('got object', object);
   const newEntry: HealthCheckEntryInput = {
     type: EntryType.HealthCheck,
     description: parseDescription(object.description),
     date: parseDate(object.date),
     specialist: parseSpecialist(object.specialist),
-    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes || []),
     healthCheckRating: parseHealthCheckRating(object.healthCheckRating),
   };
   return newEntry;
@@ -185,7 +183,7 @@ const toOccupationalHealthcareInput = ( object: any ): OccupationalHealthEntryIn
     description: parseDescription(object.description),
     date: parseDate(object.date),
     specialist: parseSpecialist(object.specialist),
-    diagnosisCodes: parseDiagnosisCodes(object.param),
+    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes || []),
     employerName: parseEmployerName(object.employerName),
   };
   if (object.sickLeave) {
@@ -201,7 +199,7 @@ const toHospitalInput = ( object: any ): HospitalEntryInput => {
     description: parseDescription(object.description),
     date: parseDate(object.date),
     specialist: parseSpecialist(object.specialist),
-    diagnosisCodes: parseDiagnosisCodes(object.param),
+    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes || []),
   };
   if (object.discharge) {
     newEntry.discharge = parseDischarge(object.discharge);
@@ -246,8 +244,6 @@ const parseSpecialist = (specialist: unknown): string => {
 };
 
 const parseHealthCheckRating = (healthCheckRating: unknown): HealhtCheckRating => {
-  console.log('got rating', healthCheckRating);
-  console.log('test', !0);
   if ((!healthCheckRating && healthCheckRating !== 0) || !isHealthCheckRating(healthCheckRating)) {
     throw new Error(`Invalid health check rating: ${healthCheckRating}`);
   }
@@ -275,7 +271,6 @@ const isType = (param: any): param is EntryType => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isHealthCheckRating = (param: any): param is HealhtCheckRating => {
-  console.log('values', Object.values(HealhtCheckRating));
   return Object.values(HealhtCheckRating).includes(param);
 };
 
