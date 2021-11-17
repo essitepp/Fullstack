@@ -54,7 +54,6 @@ const PatientInfoPage = () => {
       }
     };
     try {
-      console.log('submitting entry');
       const {data: newEntry} = await axios.post<Entry>(
         `${apiBaseUrl}/patients/${patient.id}/entries`,
         entryToAdd
