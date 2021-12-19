@@ -78,7 +78,7 @@ const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
           errors.description = requiredError;
         }
         if (values.type === EntryType.HealthCheck) {
-          if (!values.healthCheckRating) {
+          if (!values.healthCheckRating && values.healthCheckRating !== 0) {
             errors.healthCheckRating = requiredError;
           }
           const input = Number(values.healthCheckRating);
